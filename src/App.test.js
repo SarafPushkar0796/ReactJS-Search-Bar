@@ -1,7 +1,7 @@
 import { render, screen, cleanup } from '@testing-library/react';
 import App from './App';
 import React from 'react';
-import Enzyme, { shallow } from 'enzyme';
+import Enzyme, { shallow, mount } from 'enzyme';
 
 // tells Enzyme what code to expect 'from react 17'
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
@@ -33,7 +33,7 @@ const findByTestAttr = (wrapper, val) => {
   return wrapper.find(`[data-test="${val}"]`);
 }
 
-//  cleanup is passed as a parameter to afterEach to just clean up everything after each test to avoid memory leaks.
+//  cleanup is passed as a parameter to afterEach to clean up everything after each test to avoid memory leaks.
 afterEach(cleanup);
 
 describe('App component', () => {
@@ -48,6 +48,36 @@ describe('App component', () => {
     const wrapper = setup();
     const inputSearch = findByTestAttr(wrapper, 'input-search');
     expect(inputSearch.length).toBe(1);
+  });
+
+  // test - to check if there is a list element
+  test('exists a element', () => {
+    const wrapper = setup();
+    const list = findByTestAttr(wrapper, 'username-list');
+
+    // to find atleast one node with data-test attribute
+    expect(list.length).toBe(13);
+  });
+
+  // test - onChange event
+  test('simulate onchange event', () => {
+    const wrapper = setup();
+    const inputSearch = findByTestAttr(wrapper, 'input-search');
+    const state = { value: 'Kym' }
+    
+    const event = {
+      target: { value: state.value }
+    }
+
+    // simulate onChange event
+    inputSearch.simulate('change', event);
+    expect(state.value).toEqual('Kym');
+  });
+
+  // test - if className 'user' exists
+  test('if classname user exists', () => {
+    const wrapper = mount(<div className="user" />);
+    expect(wrapper.exists('.user')).toEqual(true);
   });
 });
 
